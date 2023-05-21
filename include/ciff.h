@@ -5,17 +5,30 @@
 #include <string>
 #include <vector>
 
+struct CiffHeader {
+    std::string magic;
+    uint64_t header_size;
+    uint64_t content_size;
+    uint64_t width;
+    uint64_t height;
+    std::string caption;
+    std::vector<std::string> tags;
+};
+
+
 class CIFF {
 public:
-    struct Image {
-        uint64_t width;
-        uint64_t height;
-        std::string caption;
-        std::vector<std::string> tags;
-        std::vector<uint8_t> pixels;
-    };
+    //COnstructor
+    CIFF(const std::string& file_path);
+    CIFF();
 
-    static Image parse_image(const std::string& file_path);
+    //bool parse_image();
+    bool parse_image_from_caff(std::ifstream& filestream);
+
+private:
+    std::string file_path;
+    CiffHeader header;
+    std::vector<uint8_t> image_data;
 };
 
 #endif
