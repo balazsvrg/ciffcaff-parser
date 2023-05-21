@@ -20,6 +20,12 @@ const uint32_t CREATOR_LENGTH = 8;
 
 const uint32_t DURATION_LENGTH = 8;
 
+const uint32_t CAFF_HEADER_ID = 1;
+const uint32_t CAFF_CREDITS_ID = 2;
+const uint32_t CAFF_ANIM_ID = 3;
+
+
+
 CAFF::CAFF(const std::string& filename) : filename(filename) { }
 
 // Function to parse the CAFF image
@@ -37,6 +43,11 @@ bool CAFF::parse_image() {
         uint8_t header_block_id;
         uint64_t header_block_size;
         file.read(reinterpret_cast<char*>(&header_block_id), BLOCK_ID_LENGTH);
+
+        if (header_block_id != CAFF_HEADER_ID){
+            throw std::invalid_argument("CAFF header block ID must be 1");
+        }
+
         file.read(reinterpret_cast<char*>(&header_block_size), BLOCK_SIZE_LENGTH);
         header.magic.resize(4);
         file.read(reinterpret_cast<char*>(&header.magic[0]), MAGIC_LENGTH);
@@ -53,6 +64,11 @@ bool CAFF::parse_image() {
         uint8_t credits_block_id;
         uint64_t credits_block_size;
         file.read(reinterpret_cast<char*>(&credits_block_id), BLOCK_ID_LENGTH);
+
+        if (header_block_id != CAFF_CREDITS_ID){
+            throw std::invalid_argument("CAFF credits block ID must be 2");
+        }
+
         file.read(reinterpret_cast<char*>(&credits_block_size), BLOCK_SIZE_LENGTH);
         file.read(reinterpret_cast<char*>(&credits.year), YEAR_LENGTH);
         file.read(reinterpret_cast<char*>(&credits.month), MONTH_LENGTH);
@@ -71,6 +87,11 @@ bool CAFF::parse_image() {
             uint8_t anim_block_id;
             uint64_t anim_block_size;
             file.read(reinterpret_cast<char*>(&anim_block_id), BLOCK_ID_LENGTH);
+
+            if (header_block_id != CAFF_ANIM_ID){
+                throw std::invalid_argument("CAFF header block ID must be 3");
+            }
+
             file.read(reinterpret_cast<char*>(&anim_block_size), BLOCK_SIZE_LENGTH);
             CaffAnimation& animation = animations[i];
             file.read(reinterpret_cast<char*>(&animation.duration), DURATION_LENGTH);
