@@ -1,6 +1,8 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -Wall -Werror -g
+CXXFLAGS =	-g -Wall -Wextra -Werror -Wconversion -Wsign-conversion -Wformat-security -fstack-protector-all \
+			-Wstack-protector --param ssp-buffer-size=4 -pie -Wl,-z,relro,-z,now -ftrapv -Wpedantic -Wnull-dereference \
+			-Wstrict-overflow=5
 
 # Directories
 INCLUDE_DIR = include
@@ -28,3 +30,4 @@ $(BIN_DIR)/%.o: $(SRC_DIR)/%.cpp
 # Clean rule
 clean:
 	rm -rf $(BIN_DIR)/*.o $(TARGET)
+
