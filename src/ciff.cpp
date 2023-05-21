@@ -46,7 +46,8 @@ bool CIFF::parse_image_from_stream(std::ifstream& filestream) {
         filestream.read(reinterpret_cast<char*>(&header.height), HEIGHT_LENGTH);
 
         if (header.content_size != header.width * header.height * 3) {
-            throw std::domain_error("Content size does not match Width and Height values in CIFF");
+            throw std::domain_error(
+                "Content size does not match Width and Height values in CIFF");
         }
 
         // Read the caption
@@ -58,7 +59,9 @@ bool CIFF::parse_image_from_stream(std::ifstream& filestream) {
         }
 
         // Read tags
-        uint64_t remainder_size = header.header_size - HEADER_FIXED_LENGTH_VALUES_LENGTH - header.caption.length() - 1;
+        uint64_t remainder_size = header.header_size 
+                                - HEADER_FIXED_LENGTH_VALUES_LENGTH
+                                - header.caption.length() - 1;
         std::string tag;
         for (size_t i = 0; i < remainder_size; i++) {
             filestream.get(ch);
@@ -76,7 +79,8 @@ bool CIFF::parse_image_from_stream(std::ifstream& filestream) {
 
         // Read image data
         image_data.resize(header.content_size);
-        filestream.read(reinterpret_cast<char*>(image_data.data()), static_cast<std::streamsize>(header.content_size));
+        filestream.read(reinterpret_cast<char*>(image_data.data()), 
+                        static_cast<std::streamsize>(header.content_size));
 
         return true;
     } catch (const std::exception& e) {
