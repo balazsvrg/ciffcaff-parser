@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <jpeglib.h>
 
-JpegEncoder::JpegEncoder(const std::string& filename, int width, int height, int quality)
+JpegEncoder::JpegEncoder(const std::string& filename, uint64_t width, uint64_t height, uint32_t quality)
     : filename_(filename), width_(width), height_(height), quality_(quality) {}
 
 bool JpegEncoder::encode(const std::vector<uint8_t>& image) {
@@ -23,19 +23,19 @@ bool JpegEncoder::encode(const std::vector<uint8_t>& image) {
 
     // Step 3: Set up compression parameters
     jpeg_stdio_dest(&cinfo, outfile);
-    cinfo.image_width = width_;
-    cinfo.image_height = height_;
+    cinfo.image_width = static_cast<uint32_t>(width_);
+    cinfo.image_height = static_cast<uint32_t>(height_);
     cinfo.input_components = 3;
     cinfo.in_color_space = JCS_RGB;
     jpeg_set_defaults(&cinfo);
-    jpeg_set_quality(&cinfo, quality_, TRUE);
+    jpeg_set_quality(&cinfo, static_cast<int>(quality_), TRUE);
 
     // Step 4: Start compression
     jpeg_start_compress(&cinfo, TRUE);
 
     // Step 5: Compress each scanline
     JSAMPROW row_pointer[1];
-    int row_stride = width_ * 3; // RGB: 3 bytes per pixel
+    uint64_t row_stride = width_ * 3; // RGB: 3 bytes per pixel
 
     while (cinfo.next_scanline < cinfo.image_height) {
         row_pointer[0] = const_cast<JSAMPROW>(&image[cinfo.next_scanline * row_stride]);

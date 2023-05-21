@@ -7,15 +7,15 @@
 
 class JpegEncoder {
 public:
-    JpegEncoder(const std::string& filename, int width, int height, int quality = 90);
+    JpegEncoder(const std::string& filename, uint64_t width, uint64_t height, uint32_t quality);
 
     bool encode(const std::vector<uint8_t>& image);
 
 private:
     std::string filename_;
-    int width_;
-    int height_;
-    int quality_;
+    uint64_t width_;
+    uint64_t height_;
+    uint32_t quality_;
 };
 
 #endif  // JPEG_ENCODER_H

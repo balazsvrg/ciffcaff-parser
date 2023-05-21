@@ -16,7 +16,7 @@ const uint32_t MONTH_LENGTH = 1;
 const uint32_t DAY_LENGTH = 1;
 const uint32_t HOUR_LENGTH = 1;
 const uint32_t MINUTE_LENGTH = 1;
-const uint32_t CREATOR_LENGTH = 8;
+const uint32_t CREATOR_LENGTH_LENGTH = 8;
 
 const uint32_t DURATION_LENGTH = 8;
 
@@ -80,17 +80,17 @@ bool CAFF::parse_image() {
         file.read(reinterpret_cast<char*>(&credits.day), DAY_LENGTH);
         file.read(reinterpret_cast<char*>(&credits.hour), HOUR_LENGTH);
         file.read(reinterpret_cast<char*>(&credits.minute), MINUTE_LENGTH);
-        file.read(reinterpret_cast<char*>(&credits.creator_length), CREATOR_LENGTH);
+        file.read(reinterpret_cast<char*>(&credits.creator_length), CREATOR_LENGTH_LENGTH);
         if (credits.creator_length > 0) {
             credits.creator.resize(credits.creator_length);
-            file.read(&credits.creator[0], credits.creator_length);
+            file.read(&credits.creator[0], static_cast<std::streamsize>(credits.creator_length));
         }
 
         // Date Bounds check
         if(
             credits.month == 0  ||
             credits.month > 12  ||
-            credits.day == 0  ||
+            credits.day == 0    ||
             credits.day > 31    || //This is not correct but the best I can do with not too much effort
             credits.hour > 24   ||
             credits.minute > 60
