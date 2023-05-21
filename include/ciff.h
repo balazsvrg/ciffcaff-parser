@@ -22,8 +22,8 @@ public:
     CIFF(const std::string& file_path);
     CIFF();
 
-    //bool parse_image();
-    bool parse_image_from_caff(std::ifstream& filestream);
+    bool parse_image();
+    bool parse_image_from_stream(std::ifstream& filestream);
 
     const CiffHeader& get_header() const;
     const std::vector<uint8_t>& get_data() const;

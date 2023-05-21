@@ -54,7 +54,7 @@ bool CAFF::parseImage() {
             file.read(reinterpret_cast<char*>(&animation.duration), sizeof(uint64_t));
 
             // Read CIFF data
-            animation.ciffData.parse_image_from_caff(file);
+            animation.ciffData.parse_image_from_stream(file);
 
 
             /*
@@ -62,7 +62,6 @@ bool CAFF::parseImage() {
             animation.ciffData.resize(dataSize);
             file.read(reinterpret_cast<char*>(&animation.ciffData[0]), dataSize);*/
         }
-        std::cout << "animations read" << std::endl;
         file.close();
         return true;
     } catch (const std::exception& e) {
