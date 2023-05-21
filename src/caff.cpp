@@ -7,7 +7,7 @@
 CAFF::CAFF(const std::string& filename) : filename(filename) { }
 
 // Function to parse the CAFF image
-bool CAFF::parseImage() {
+bool CAFF::parse_image() {
     std::ifstream file(filename, std::ios::binary);
     if (!file) {
         std::cerr << "Failed to open file: " << filename << std::endl;
@@ -54,7 +54,7 @@ bool CAFF::parseImage() {
             file.read(reinterpret_cast<char*>(&animation.duration), sizeof(uint64_t));
 
             // Read CIFF data
-            animation.ciffData.parse_image_from_stream(file);
+            animation.ciff_data.parse_image_from_stream(file);
 
 
             /*
@@ -72,16 +72,16 @@ bool CAFF::parseImage() {
 }
 
 // Getter for CAFF header
-const CaffHeader& CAFF::getHeader() const {
+const CaffHeader& CAFF::get_header() const {
     return header;
 }
 
 // Getter for CAFF credits
-const CaffCredits& CAFF::getCredits() const {
+const CaffCredits& CAFF::get_credits() const {
     return credits;
 }
 
 // Getter for CAFF animations
-const std::vector<CaffAnimation>& CAFF::getAnimations() const {
+const std::vector<CaffAnimation>& CAFF::get_animations() const {
     return animations;
 }

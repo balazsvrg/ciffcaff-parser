@@ -27,7 +27,7 @@ struct CaffCredits {
 // Structure for storing CAFF animation information
 struct CaffAnimation {
     uint64_t duration;
-    CIFF ciffData;
+    CIFF ciff_data;
 };
 
 // Class for parsing a CAFF image
@@ -37,12 +37,12 @@ public:
     CAFF(const std::string& filename);
 
     // Function to parse the CAFF image
-    bool parseImage();
+    bool parse_image();
 
     // Getters for CAFF data
-    const CaffHeader& getHeader() const;
-    const CaffCredits& getCredits() const;
-    const std::vector<CaffAnimation>& getAnimations() const;
+    const CaffHeader& get_header() const;
+    const CaffCredits& get_credits() const;
+    const std::vector<CaffAnimation>& get_animations() const;
 
 private:
     std::string filename;
