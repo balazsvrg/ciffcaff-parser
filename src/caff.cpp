@@ -49,6 +49,7 @@ bool CAFF::parse_image() {
         }
 
         file.read(reinterpret_cast<char*>(&header_block_size), BLOCK_SIZE_LENGTH);
+        
         header.magic.resize(4);
         file.read(reinterpret_cast<char*>(&header.magic[0]), MAGIC_LENGTH);
 
@@ -65,7 +66,7 @@ bool CAFF::parse_image() {
         uint64_t credits_block_size;
         file.read(reinterpret_cast<char*>(&credits_block_id), BLOCK_ID_LENGTH);
 
-        if (header_block_id != CAFF_CREDITS_ID){
+        if (credits_block_id != CAFF_CREDITS_ID){
             throw std::invalid_argument("CAFF credits block ID must be 2");
         }
 
@@ -88,7 +89,7 @@ bool CAFF::parse_image() {
             uint64_t anim_block_size;
             file.read(reinterpret_cast<char*>(&anim_block_id), BLOCK_ID_LENGTH);
 
-            if (header_block_id != CAFF_ANIM_ID){
+            if (anim_block_id != CAFF_ANIM_ID){
                 throw std::invalid_argument("CAFF header block ID must be 3");
             }
 
