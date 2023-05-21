@@ -37,9 +37,7 @@ bool CAFF::parse_image() {
     }
 
     try {
-        // Read CAFF header
-
-        //read header block 
+        //Read header block 
         uint8_t header_block_id;
         uint64_t header_block_size;
         file.read(reinterpret_cast<char*>(&header_block_id), BLOCK_ID_LENGTH);
@@ -49,14 +47,18 @@ bool CAFF::parse_image() {
         }
 
         file.read(reinterpret_cast<char*>(&header_block_size), BLOCK_SIZE_LENGTH);
+
+        if (header_block_size != MAGIC_LENGTH + HEADER_SIZE_LENGTH + NUM_ANIM_LENGTH){
+            throw std::invalid_argument("Invalid caff header block size");
+        }
         
+        //Read CAFF Header
         header.magic.resize(4);
         file.read(reinterpret_cast<char*>(&header.magic[0]), MAGIC_LENGTH);
 
         if (header.magic.compare(VALID_MAGIC_VALUE) != 0){
             throw std::invalid_argument("Magic value is not \"CAFF\"");
         }
-
 
         file.read(reinterpret_cast<char*>(&header.headerSize), HEADER_SIZE_LENGTH);
         file.read(reinterpret_cast<char*>(&header.numAnim), NUM_ANIM_LENGTH);
@@ -71,15 +73,29 @@ bool CAFF::parse_image() {
         }
 
         file.read(reinterpret_cast<char*>(&credits_block_size), BLOCK_SIZE_LENGTH);
+
+        // Read CAFF credits 
         file.read(reinterpret_cast<char*>(&credits.year), YEAR_LENGTH);
         file.read(reinterpret_cast<char*>(&credits.month), MONTH_LENGTH);
         file.read(reinterpret_cast<char*>(&credits.day), DAY_LENGTH);
         file.read(reinterpret_cast<char*>(&credits.hour), HOUR_LENGTH);
         file.read(reinterpret_cast<char*>(&credits.minute), MINUTE_LENGTH);
-        file.read(reinterpret_cast<char*>(&credits.creatorLen), CREATOR_LENGTH);
-        if (credits.creatorLen > 0) {
-            credits.creator.resize(credits.creatorLen);
-            file.read(&credits.creator[0], credits.creatorLen);
+        file.read(reinterpret_cast<char*>(&credits.creator_length), CREATOR_LENGTH);
+        if (credits.creator_length > 0) {
+            credits.creator.resize(credits.creator_length);
+            file.read(&credits.creator[0], credits.creator_length);
+        }
+
+        // Date Bounds check
+        if(
+            credits.month == 0  ||
+            credits.month > 12  ||
+            credits.day == 0  ||
+            credits.day > 31    || //This is not correct but the best I can do with not too much effort
+            credits.hour > 24   ||
+            credits.minute > 60
+        ){
+            throw std::invalid_argument("Invalid credits");
         }
 
         // Read CAFF animations
