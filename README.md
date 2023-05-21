@@ -1,6 +1,6 @@
 # Software Security Homework Assignment - Parser
 
-This is an open-source project written in C/C++ that aims to generate preview images in JPEG or WebP format from CIFF and CAFF image files. The purpose of this project is to apply the learned methods in practice and develop a security-critical software.
+This is an homework assignment project written in C++ that aims to generate preview images in JPEG format from CIFF and CAFF image files. The purpose of this project is to apply the learned methods in practice and develop security-critical software.
 
 ## File Formats Used
 
