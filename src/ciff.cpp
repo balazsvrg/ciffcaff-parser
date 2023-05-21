@@ -33,9 +33,10 @@ bool CIFF::parse_image() {
 bool CIFF::parse_image_from_stream(std::ifstream& filestream) {
     try{
         // Read the header
+        header.magic.resize(MAGIC_LENGTH);
         filestream.read(reinterpret_cast<char*>(&header.magic[0]), MAGIC_LENGTH);
 
-        if (header.magic != VALID_MAGIC_VALUE){
+        if (header.magic.compare(VALID_MAGIC_VALUE) != 0){
             throw std::invalid_argument("Magic value is not \"CIFF\"");
         }
 
@@ -44,7 +45,7 @@ bool CIFF::parse_image_from_stream(std::ifstream& filestream) {
         filestream.read(reinterpret_cast<char*>(&header.width), WIDTH_LENGTH);
         filestream.read(reinterpret_cast<char*>(&header.height), HEIGHT_LENGTH);
 
-        if (header.header_size != header.width * header.height * 3) {
+        if (header.content_size != header.width * header.height * 3) {
             throw std::domain_error("Content size does not match Width and Height values in CIFF");
         }
 
