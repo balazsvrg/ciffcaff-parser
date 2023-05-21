@@ -1,7 +1,7 @@
 # Compiler and flags
 CXX = g++
 CXXFLAGS =	-g -Wall -Wextra -Werror -Wconversion -Wsign-conversion -Wformat-security -fstack-protector-all \
-			-Wstack-protector --param ssp-buffer-size=4 -pie -Wl,-z,relro,-z,now -ftrapv -Wpedantic -Wnull-dereference \
+			-Wstack-protector --param ssp-buffer-size=4 -fPIE -pie -Wl,-z,relro,-z,now -ftrapv -Wpedantic -Wnull-dereference \
 			-Wstrict-overflow=5
 
 # Directories
