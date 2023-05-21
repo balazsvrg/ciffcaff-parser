@@ -3,6 +3,15 @@
 
 #include "ciff.h"
 
+const uint32_t MAGIC_LENGTH = 4;
+const uint32_t HEADER_SIZE_LENGTH = 8;
+const uint32_t CONTENT_SIZE_LENGTH = 8;
+const uint32_t WIDTH_LENGTH = 8;
+const uint32_t HEIGHT_LENGTH = 8;
+
+const uint32_t HEADER_FIXED_LENGTH_VALUES_LENGTH = 36;
+const std::string VALID_MAGIC_VALUE = "CIFF";
+
 CIFF::CIFF(const std::string& file_path) : file_path(file_path) {}
 
 CIFF::CIFF() {}
@@ -22,41 +31,59 @@ bool CIFF::parse_image() {
 }
 
 bool CIFF::parse_image_from_stream(std::ifstream& filestream) {
-    // Read the header
-    filestream.read(reinterpret_cast<char*>(&header.magic[0]), 4);
-    filestream.read(reinterpret_cast<char*>(&header.header_size), sizeof(uint64_t));
-    filestream.read(reinterpret_cast<char*>(&header.content_size), sizeof(uint64_t));
-    filestream.read(reinterpret_cast<char*>(&header.width), sizeof(uint64_t));
-    filestream.read(reinterpret_cast<char*>(&header.height), sizeof(uint64_t));
+    try{
+        // Read the header
+        filestream.read(reinterpret_cast<char*>(&header.magic[0]), MAGIC_LENGTH);
 
-    // Read the caption
-    char ch;
-    while (filestream.get(ch)) {
-        if (ch == '\n')
-            break;
-        header.caption += ch;
-    }
-
-    // Read tags
-    uint32_t remainder_size = header.header_size - 36 - header.caption.length() - 1;
-    std::string tag;
-    for (size_t i = 0; i < remainder_size; i++) {
-        filestream.get(ch);
-        if (ch == '\0') {
-            if (!tag.empty()) {
-                header.tags.push_back(tag);
-                tag.clear();
-            }
-        } else {
-            tag += ch;
+        if (header.magic != VALID_MAGIC_VALUE){
+            throw std::invalid_argument("Magic value is not \"CIFF\"");
         }
+
+        filestream.read(reinterpret_cast<char*>(&header.header_size), HEADER_SIZE_LENGTH);
+        filestream.read(reinterpret_cast<char*>(&header.content_size), CONTENT_SIZE_LENGTH);
+        filestream.read(reinterpret_cast<char*>(&header.width), WIDTH_LENGTH);
+        filestream.read(reinterpret_cast<char*>(&header.height), HEIGHT_LENGTH);
+
+        if (header.header_size != header.width * header.height * 3) {
+            throw std::domain_error("Content size does not match Width and Height values in CIFF");
+        }
+
+        // Read the caption
+        char ch;
+        while (filestream.get(ch)) {
+            if (ch == '\n')
+                break;
+            header.caption += ch;
+        }
+
+        // Read tags
+        uint32_t remainder_size = header.header_size - HEADER_FIXED_LENGTH_VALUES_LENGTH - header.caption.length() - 1;
+        std::string tag;
+        for (size_t i = 0; i < remainder_size; i++) {
+            filestream.get(ch);
+            if (ch == '\0') {
+                if (!tag.empty()) {
+                    header.tags.push_back(tag);
+                    tag.clear();
+                }
+            } else if (ch == '\n'){
+                throw std::domain_error("Tags cannot contain line breaks");    
+            } else{
+                tag += ch;
+            }
+        }
+
+        // Read image data
+        image_data.resize(header.content_size);
+        filestream.read(reinterpret_cast<char*>(image_data.data()), header.content_size);
+
+        return true;
+    } catch (const std::exception& e) {
+        std::cerr << "Error while parsing the CIFF image: " << e.what() << std::endl;
+        filestream.close();
+        return false;
     }
-
-    // Read image data
-    image_data.resize(header.content_size);
-    filestream.read(reinterpret_cast<char*>(image_data.data()), header.content_size);
-
-    return true;
+    
 }
 
 const CiffHeader& CIFF::get_header() const {

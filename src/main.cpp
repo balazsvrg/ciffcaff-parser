@@ -1,8 +1,11 @@
 #include <iostream>
 #include <string>
+
 #include "ciff.h"
 #include "caff.h"
 #include "JpegEncoder.h"
+
+const uint32_t JPEG_QUALITY = 80;
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
@@ -25,7 +28,7 @@ int main(int argc, char* argv[]) {
         std::string output_filename = image_file_path.substr(0, image_file_path.find_last_of('.')) + ".jpeg";
 
         // Encode CIFF image as JPEG
-        JpegEncoder jpeg_encoder(output_filename, ciff_image.get_header().width, ciff_image.get_header().height);
+        JpegEncoder jpeg_encoder(output_filename, ciff_image.get_header().width, ciff_image.get_header().height, JPEG_QUALITY);
         if (!jpeg_encoder.encode(ciff_image.get_data())) {
             std::cerr << "Failed to encode CIFF image to JPEG: " << output_filename << std::endl;
             return -1;
@@ -51,7 +54,7 @@ int main(int argc, char* argv[]) {
         std::string output_filename = image_file_path.substr(0, image_file_path.find_last_of('.')) + ".jpeg";
 
         // Encode CIFF frame as JPEG
-        JpegEncoder jpeg_encoder(output_filename, ciff_frame.get_header().width, ciff_frame.get_header().height, 80);
+        JpegEncoder jpeg_encoder(output_filename, ciff_frame.get_header().width, ciff_frame.get_header().height, JPEG_QUALITY);
         if (!jpeg_encoder.encode(ciff_frame.get_data())) {
             std::cerr << "Failed to encode CIFF frame to JPEG: " << output_filename << std::endl;
             return -1;
