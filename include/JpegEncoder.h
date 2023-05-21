@@ -7,7 +7,10 @@
 
 class JpegEncoder {
 public:
-    JpegEncoder(const std::string& filename, uint64_t width, uint64_t height, uint32_t quality);
+    JpegEncoder(const std::string& filename, 
+                uint64_t width, 
+                uint64_t height, 
+                uint32_t quality);
 
     bool encode(const std::vector<uint8_t>& image);
 

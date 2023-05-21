@@ -3,8 +3,14 @@
 #include <cstdio>
 #include <jpeglib.h>
 
-JpegEncoder::JpegEncoder(const std::string& filename, uint64_t width, uint64_t height, uint32_t quality)
-    : filename_(filename), width_(width), height_(height), quality_(quality) {}
+JpegEncoder::JpegEncoder( const std::string& filename, 
+                          uint64_t width,
+                          uint64_t height, 
+                          uint32_t quality) : 
+                          filename_(filename), 
+                          width_(width), 
+                          height_(height), 
+                          quality_(quality) {}
 
 bool JpegEncoder::encode(const std::vector<uint8_t>& image) {
     // Step 1: Create JPEG structures and initialize error handling
@@ -38,7 +44,8 @@ bool JpegEncoder::encode(const std::vector<uint8_t>& image) {
     uint64_t row_stride = width_ * 3; // RGB: 3 bytes per pixel
 
     while (cinfo.next_scanline < cinfo.image_height) {
-        row_pointer[0] = const_cast<JSAMPROW>(&image[cinfo.next_scanline * row_stride]);
+        row_pointer[0] = 
+            const_cast<JSAMPROW>(&image[cinfo.next_scanline * row_stride]);
         jpeg_write_scanlines(&cinfo, row_pointer, 1);
     }
 
