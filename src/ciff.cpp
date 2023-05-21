@@ -111,3 +111,11 @@ bool CIFF::parse_image_from_caff(std::ifstream& filestream){
 
     return true;
 }
+
+const CiffHeader& CIFF::get_header() const {
+    return header;
+}
+
+const std::vector<uint8_t>& CIFF::get_data() const {
+    return image_data;
+}

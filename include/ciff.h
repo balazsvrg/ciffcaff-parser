@@ -25,6 +25,9 @@ public:
     //bool parse_image();
     bool parse_image_from_caff(std::ifstream& filestream);
 
+    const CiffHeader& get_header() const;
+    const std::vector<uint8_t>& get_data() const;
+
 private:
     std::string file_path;
     CiffHeader header;
