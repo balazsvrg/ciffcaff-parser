@@ -1,10 +1,10 @@
-#include "include/caff.h"
+#include "caff.h"
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
 
 // CAFF class constructor
-CAFF::CAFF(const std::string& filename) : filename(filename) {}
+CAFF::CAFF(const std::string& filename) : filename(filename) { }
 
 // Function to parse the CAFF image
 bool CAFF::parseImage() {
@@ -16,12 +16,22 @@ bool CAFF::parseImage() {
 
     try {
         // Read CAFF header
-        file.read(reinterpret_cast<char*>(&header.magic[0]), 4);
+
+        //read header block 
+        uint8_t header_block_id;
+        uint64_t header_block_size;
+        file.read(reinterpret_cast<char*>(&header_block_id), 1);
+        file.read(reinterpret_cast<char*>(&header_block_size), 8);
         header.magic.resize(4);
+        file.read(reinterpret_cast<char*>(&header.magic[0]), 4);
         file.read(reinterpret_cast<char*>(&header.headerSize), sizeof(uint64_t));
         file.read(reinterpret_cast<char*>(&header.numAnim), sizeof(uint64_t));
 
-        // Read CAFF credits
+        // Read CAFF credits block 
+        uint8_t credits_block_id;
+        uint64_t credits_block_size;
+        file.read(reinterpret_cast<char*>(&credits_block_id), 1);
+        file.read(reinterpret_cast<char*>(&credits_block_size), 8);
         file.read(reinterpret_cast<char*>(&credits.year), sizeof(uint16_t));
         file.read(reinterpret_cast<char*>(&credits.month), sizeof(uint8_t));
         file.read(reinterpret_cast<char*>(&credits.day), sizeof(uint8_t));
@@ -36,6 +46,10 @@ bool CAFF::parseImage() {
         // Read CAFF animations
         animations.resize(header.numAnim);
         for (uint64_t i = 0; i < header.numAnim; ++i) {
+            uint8_t anim_block_id;
+            uint64_t anim_block_size;
+            file.read(reinterpret_cast<char*>(&anim_block_id), 1);
+            file.read(reinterpret_cast<char*>(&anim_block_size), 8);
             CaffAnimation& animation = animations[i];
             file.read(reinterpret_cast<char*>(&animation.duration), sizeof(uint64_t));
 
@@ -44,7 +58,7 @@ bool CAFF::parseImage() {
             animation.ciffData.resize(dataSize);
             file.read(reinterpret_cast<char*>(&animation.ciffData[0]), dataSize);
         }
-
+        std::cout << "animations read" << std::endl;
         file.close();
         return true;
     } catch (const std::exception& e) {

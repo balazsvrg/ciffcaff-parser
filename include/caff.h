@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "ciff.h"
+
 // Structure for storing CAFF header information
 struct CaffHeader {
     std::string magic;
@@ -25,7 +27,7 @@ struct CaffCredits {
 // Structure for storing CAFF animation information
 struct CaffAnimation {
     uint64_t duration;
-    std::vector<uint8_t> ciffData;
+    CIFF ciffData;
 };
 
 // Class for parsing a CAFF image
@@ -47,6 +49,7 @@ private:
     CaffHeader header;
     CaffCredits credits;
     std::vector<CaffAnimation> animations;
+
 };
 
 #endif  // CAFF_PARSER_H
